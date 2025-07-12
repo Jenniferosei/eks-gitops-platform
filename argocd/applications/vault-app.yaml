@@ -1,3 +1,28 @@
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: vault
+#   namespace: argocd
+# spec:
+#   project: default
+#   source:
+#     repoURL: https://github.com/Jenniferosei/eks-gitops-platform.git
+#     targetRevision: HEAD
+#     path: apps/vault
+#     helm:
+#       valueFiles:
+#         - values.yaml
+#     chart: vault
+#     repoURL: https://helm.releases.hashicorp.com
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: vault
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+
+
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -6,14 +31,19 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/Jenniferosei/eks-gitops-platform.git
-    targetRevision: HEAD
-    path: apps/vault
-    helm:
-      valueFiles:
-        - values.yaml
-    chart: vault
     repoURL: https://helm.releases.hashicorp.com
+    chart: vault
+    targetRevision: 0.27.0
+    helm:
+      parameters:
+        - name: server.dev.enabled
+          value: "true"
+        - name: ui.enabled
+          value: "true"
+        - name: injector.enabled
+          value: "true"
+        - name: global.tlsDisable
+          value: "true"
   destination:
     server: https://kubernetes.default.svc
     namespace: vault
